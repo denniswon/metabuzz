@@ -24,87 +24,85 @@ import Messages from './components/Messages'
 import Alerts from './components/Alerts'
 import ChatPage from './components/ChatPage'
 
-const Home = lazy(() => import('./components/Home'))
-const Profile = lazy(() => import('./components/Profile'))
+const Home = lazy(() => import('./components/Home')) // eslint-disable-line
+const Profile = lazy(() => import('./components/Profile')) // eslint-disable-line
 
-const DefaultContainer = withRouter(({ history }) => {
-  return (
+const DefaultContainer = withRouter(({ history }) => (
   <div className="body-wrap">
     <main className="main">
-    <div
-      className={
-      history.location.pathname.slice(0, 9) !== '/messages'
-        ? 'middle-section ms-width'
-        : 'middle-section'
-      }
-    >
-      <Route path="/" exact>
-      <Redirect to="/home" />
-      </Route>
-      <Route path="/home" exact>
-      <Home />
-      </Route>
-      <Route path="/profile/:username" exact>
-      <Profile />
-      </Route>
-      <Route path="/tweet/:username/:id" exact>
-      <Tweet />
-      </Route>
-      <Route path="/bookmarks" exact>
-      <Bookmarks />
-      </Route>
-      <Route path="/lists" exact>
-      <Lists />
-      </Route>
-      <Route path="/lists/:id" exact>
-      <ListPage />
-      </Route>
-      <Route path="/explore" exact>
-      <Explore />
-      </Route>
-      <Route path="/notifications" exact>
-      <Notifications />
-      </Route>
-      <Route path="/messages">
-      <Messages />
-      </Route>
-    </div>
-    <Route path="/messages">
-      <ChatPage />
-    </Route>
-    {history.location.pathname.slice(0, 9) !== '/messages' && (
-      <div className="right-section">
-      <Feed />
+      <div
+        className={
+          history.location.pathname.slice(0, 9) !== '/messages'
+            ? 'middle-section ms-width'
+            : 'middle-section'
+        }
+      >
+        <Route path="/" exact>
+          <Redirect to="/home" />
+        </Route>
+        <Route path="/home" exact>
+          <Home />
+        </Route>
+        <Route path="/profile/:username" exact>
+          <Profile />
+        </Route>
+        <Route path="/tweet/:username/:id" exact>
+          <Tweet />
+        </Route>
+        <Route path="/bookmarks" exact>
+          <Bookmarks />
+        </Route>
+        <Route path="/lists" exact>
+          <Lists />
+        </Route>
+        <Route path="/lists/:id" exact>
+          <ListPage />
+        </Route>
+        <Route path="/explore" exact>
+          <Explore />
+        </Route>
+        <Route path="/notifications" exact>
+          <Notifications />
+        </Route>
+        <Route path="/messages">
+          <Messages />
+        </Route>
       </div>
-    )}
+      <Route path="/messages">
+        <ChatPage />
+      </Route>
+      {history.location.pathname.slice(0, 9) !== '/messages' && (
+        <div className="right-section">
+          <Feed />
+        </div>
+      )}
     </main>
     <nav className="header">
-    <Nav />
+      <Nav />
     </nav>
   </div>
-  )
-})
+))
 
 function App() {
   return (
-  <div className="dark-mode">
-    <StoreProvider>
-    <BrowserRouter>
-      <Suspense fallback={<Loader />}>
-      <Alerts />
-      <Switch>
-        <Route path="/login" exact>
-        <Login />
-        </Route>
-        <Route path="/signup" exact>
-        <Signup />
-        </Route>
-        <Route component={DefaultContainer} />
-      </Switch>
-      </Suspense>
-    </BrowserRouter>
-    </StoreProvider>
-  </div>
+    <div className="dark-mode">
+      <StoreProvider>
+        <BrowserRouter>
+          <Suspense fallback={<Loader />}>
+            <Alerts />
+            <Switch>
+              <Route path="/login" exact>
+                <Login />
+              </Route>
+              <Route path="/signup" exact>
+                <Signup />
+              </Route>
+              <Route component={DefaultContainer} />
+            </Switch>
+          </Suspense>
+        </BrowserRouter>
+      </StoreProvider>
+    </div>
   )
 }
 

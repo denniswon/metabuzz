@@ -8,9 +8,9 @@ const StoreProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const actions = useActions(state, applyMiddleware(dispatch))
   return (
-  <StoreContext.Provider value={{ state, actions }}>
-    {children}
-  </StoreContext.Provider>
+    <StoreContext.Provider value={{ state, actions }}>
+      {children}
+    </StoreContext.Provider>
   )
 }
 

@@ -23,182 +23,182 @@ const ChatPage = (props) => {
 
   const { account } = state
   useEffect(() => {
-  if (props.history.location.pathname.slice(10).length === 24)
-    getConversation(props.history.location.pathname.slice(10))
-  // check when component unmounts
-  return () => {
-    if (roomRef.current) {
-    socket.emit('leaveRoom', roomRef.current)
+    if (props.history.location.pathname.slice(10).length === 24)
+      getConversation(props.history.location.pathname.slice(10))
+    // check when component unmounts
+    return () => {
+      if (roomRef.current) {
+        socket.emit('leaveRoom', roomRef.current)
+      }
     }
-  }
   }, [props.history.location.pathname])
 
   useEffect(() => {
-  if (!mounted.current) {
-    mounted.current = true
-  } else {
-    if (document.querySelector('#messageBody')) {
-    const messageBody = document.querySelector('#messageBody')
-    messageBody.scrollTop =
-      messageBody.scrollHeight - messageBody.clientHeight
+    if (!mounted.current) {
+      mounted.current = true
+    } else {
+      if (document.querySelector('#messageBody')) {
+        const messageBody = document.querySelector('#messageBody')
+        messageBody.scrollTop =
+          messageBody.scrollHeight - messageBody.clientHeight
+      }
+      socket.on('output', (msg) => {
+        const currConversation = conversation
+        currConversation.push(msg)
+        setConversation(currConversation)
+        setText((text) => [...text, ''])
+        const messageBody = document.querySelector('#messageBody')
+        messageBody.scrollTop =
+          messageBody.scrollHeight - messageBody.clientHeight
+      })
     }
-    socket.on('output', (msg) => {
-    const currConversation = conversation
-    currConversation.push(msg)
-    setConversation(currConversation)
-    setText((text) => [...text, ''])
-    const messageBody = document.querySelector('#messageBody')
-    messageBody.scrollTop =
-      messageBody.scrollHeight - messageBody.clientHeight
-    })
-  }
   }, [conversation])
 
   const fillConversation = (params) => {
-  setConversation(params)
+    setConversation(params)
   }
 
   const sendMsg = () => {
-  if (text.length > 0) {
-    document.getElementById('chat').value = ''
-    const id =
-    state.conversation.participants[0] !== state.account._id
-      ? state.conversation.participants[0]
-      : state.conversation.participants[1]
-    socket.emit('chat', { room, id, content: text })
-  }
+    if (text.length > 0) {
+      document.getElementById('chat').value = ''
+      const id =
+        state.conversation.participants[0] !== state.account._id
+          ? state.conversation.participants[0]
+          : state.conversation.participants[1]
+      socket.emit('chat', { room, id, content: text })
+    }
   }
 
   const getConversation = (id) => {
-  if (room) {
-    socket.emit('leaveRoom', room)
-  }
-  socket.emit('subscribe', id)
-  setRoom(id)
-  roomRef.current = id
-  actions.getSingleConversation({ id, func: fillConversation })
+    if (room) {
+      socket.emit('leaveRoom', room)
+    }
+    socket.emit('subscribe', id)
+    setRoom(id)
+    roomRef.current = id
+    actions.getSingleConversation({ id, func: fillConversation })
   }
 
   const handleInputChange = (e) => {
-  setText(e.target.value)
+    setText(e.target.value)
   }
 
   const handleKeyDown = (e) => {
-  console.log(conversation)
-  if (e.keyCode === 13) {
-    sendMsg()
-  }
+    console.log(conversation)
+    if (e.keyCode === 13) {
+      sendMsg()
+    }
   }
 
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 888px)' })
 
   return (
-  <div className={props.res ? 'chat-wrapper' : 'chat-wrapper chat-right'}>
-    {account ? (
-    isTabletOrMobile && !props.res ? null : (
-      <div className="chat-height">
-      <div className="chat-header-wrapper">
-        {props.res && (
-        <div className="profile-header-back">
-          <div
-          onClick={() => window.history.back()}
-          className="header-back-wrapper"
-          >
-          <ICON_ARROWBACK />
-          </div>
-        </div>
-        )}
-        {/* <h4>
+    <div className={props.res ? 'chat-wrapper' : 'chat-wrapper chat-right'}>
+      {account ? (
+        isTabletOrMobile && !props.res ? null : (
+          <div className="chat-height">
+            <div className="chat-header-wrapper">
+              {props.res && (
+                <div className="profile-header-back">
+                  <div
+                    onClick={() => window.history.back()}
+                    className="header-back-wrapper"
+                  >
+                    <ICON_ARROWBACK />
+                  </div>
+                </div>
+              )}
+              {/* <h4>
            Ali hd
         </h4>
         <span>
           @alihd
         </span> */}
-      </div>
-      <div className="conv-div">
-        <div id="messageBody" className="conversation-wrapper">
-        {room ? (
-          conversation.map((msg, i) => (
-          <div key={msg._id}>
-            {msg.sender.username === account.username ? (
-            <div className="users-box">
-              <div className="users-msg">
-              <div className="users-content">{msg.content}</div>
-              </div>
-              {i > 0 &&
-              moment
-              .duration(
-                moment(msg.createdAt).diff(
-                moment(conversation[i - 1].createdAt),
-                ),
-              )
-              .asMinutes() > 1 ? (
-              <div className="users-date">
-                {moment(msg.createdAt).format(
-                'MMM D, YYYY, h:mm A',
+            </div>
+            <div className="conv-div">
+              <div id="messageBody" className="conversation-wrapper">
+                {room ? (
+                  conversation.map((msg, i) => (
+                    <div key={msg._id}>
+                      {msg.sender.username === account.username ? (
+                        <div className="users-box">
+                          <div className="users-msg">
+                            <div className="users-content">{msg.content}</div>
+                          </div>
+                          {i > 0 &&
+                          moment
+                            .duration(
+                              moment(msg.createdAt).diff(
+                                moment(conversation[i - 1].createdAt),
+                              ),
+                            )
+                            .asMinutes() > 1 ? (
+                            <div className="users-date">
+                              {moment(msg.createdAt).format(
+                                'MMM D, YYYY, h:mm A',
+                              )}
+                            </div>
+                          ) : (
+                            <div style={{ marginTop: '-20px' }}></div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="sender-box">
+                          <div className="sender-msg">
+                            <div className="sender-content">{msg.content}</div>
+                          </div>
+                          {i > 0 &&
+                          moment
+                            .duration(
+                              moment(msg.createdAt).diff(
+                                moment(conversation[i - 1].createdAt),
+                              ),
+                            )
+                            .asMinutes() > 1 ? (
+                            <div className="sender-date">
+                              {moment(msg.createdAt).format(
+                                'MMM D, YYYY, h:mm A',
+                              )}
+                            </div>
+                          ) : (
+                            <div style={{ marginTop: '-20px' }}></div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="not-selected-msg">
+                    <div>You dont have a message selected</div>
+                    <p>Choose one from your existing messages, on the left.</p>
+                  </div>
                 )}
               </div>
-              ) : (
-              <div style={{ marginTop: '-20px' }}></div>
-              )}
             </div>
-            ) : (
-            <div className="sender-box">
-              <div className="sender-msg">
-              <div className="sender-content">{msg.content}</div>
+            <div className="chat-bottom-wrapper">
+              <div
+                className={
+                  room ? 'chat-input-container active' : 'chat-input-container'
+                }
+              >
+                <input
+                  disabled={!room}
+                  onKeyDown={(e) => handleKeyDown(e)}
+                  onChange={(e) => handleInputChange(e)}
+                  placeholder="Start a new message"
+                  id="chat"
+                  type="text"
+                  name="message"
+                />
+                <div onClick={sendMsg}>
+                  <ICON_SEND />
+                </div>
               </div>
-              {i > 0 &&
-              moment
-              .duration(
-                moment(msg.createdAt).diff(
-                moment(conversation[i - 1].createdAt),
-                ),
-              )
-              .asMinutes() > 1 ? (
-              <div className="sender-date">
-                {moment(msg.createdAt).format(
-                'MMM D, YYYY, h:mm A',
-                )}
-              </div>
-              ) : (
-              <div style={{ marginTop: '-20px' }}></div>
-              )}
             </div>
-            )}
           </div>
-          ))
-        ) : (
-          <div className="not-selected-msg">
-          <div>You dont have a message selected</div>
-          <p>Choose one from your existing messages, on the left.</p>
-          </div>
-        )}
-        </div>
-      </div>
-      <div className="chat-bottom-wrapper">
-        <div
-        className={
-          room ? 'chat-input-container active' : 'chat-input-container'
-        }
-        >
-        <input
-          disabled={!room}
-          onKeyDown={(e) => handleKeyDown(e)}
-          onChange={(e) => handleInputChange(e)}
-          placeholder="Start a new message"
-          id="chat"
-          type="text"
-          name="message"
-        />
-        <div onClick={sendMsg}>
-          <ICON_SEND />
-        </div>
-        </div>
-      </div>
-      </div>
-    )
-    ) : null}
-  </div>
+        )
+      ) : null}
+    </div>
   )
 }
 
