@@ -1,0 +1,9 @@
+{
+  "name": "metabuzz",
+  "version": "1.0.0",
+  "description": "NFT native gamified social network",
+  "main": "index.js",
+  "repository": "https://github.com/denniswon/metabuzz.git",
+  "author": "denniswon",
+  "license": "MIT"
+}
